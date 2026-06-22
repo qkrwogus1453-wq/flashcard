@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MVP Vol.2 단어 퀴즈 — 1001~1300</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0f1a; --surface: #161927; --surface2: #1e2235; --border: #262c45;
+    --accent: #f97316; --accent2: #fb923c; --accent-glow: #f9731633;
+    --green: #34d399; --green-bg: #34d39918;
+    --red: #f87171; --red-bg: #f8717118;
+    --yellow: #fbbf24; --text: #eef0f8; --muted: #7b82a8; --radius: 14px;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+
+  .header { width: 100%; background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .logo { font-size: 17px; font-weight: 800; letter-spacing: -0.4px; }
+  .logo span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header-sub { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  .page { width: 100%; max-width: 860px; padding: 36px 24px; }
+  .page-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+
+  .set-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .set-btn { background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px; padding: 22px 16px 18px; cursor: pointer; color: var(--text); font-family: 'Inter', sans-serif; transition: all 0.15s; text-align: center; position: relative; overflow: hidden; }
+  .set-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--accent)0a, transparent); opacity: 0; transition: opacity 0.2s; }
+  .set-btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px var(--accent-glow); }
+  .set-btn:hover::before { opacity: 1; }
+  .set-n { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono', monospace; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: block; margin-bottom: 4px; }
+  .set-r { font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px; }
+  .set-count { font-size: 11px; color: var(--border); display: block; }
+  .set-score { font-size: 12px; font-weight: 700; display: block; margin-top: 6px; }
+  .set-btn.done { border-color: var(--green)55; }
+  .set-btn.done .set-n { background: linear-gradient(135deg, var(--green), #6ee7b7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  .quiz-page { width: 100%; max-width: 700px; padding: 28px 20px; display: none; }
+  .top-bar { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+  .back-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; color: var(--muted); font-size: 13px; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+  .back-btn:hover { color: var(--text); border-color: var(--muted); }
+  .prog-wrap { flex: 1; }
+  .prog-bar { height: 5px; background: var(--surface2); border-radius: 99px; overflow: hidden; margin-bottom: 5px; }
+  .prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; transition: width 0.4s ease; }
+  .prog-text { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  .chips { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 20px; }
+  .chip { font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 5px 12px; border-radius: 99px; }
+  .chip-o { background: var(--green-bg); color: var(--green); }
+  .chip-x { background: var(--red-bg); color: var(--red); }
+  .chip-n { background: var(--surface2); color: var(--muted); }
+
+  .q-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 20px; padding: 48px 32px 40px; text-align: center; margin-bottom: 20px; position: relative; }
+  .q-badge { position: absolute; top: 16px; left: 18px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); background: var(--surface2); padding: 3px 9px; border-radius: 6px; }
+  .q-num { font-size: 13px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; }
+  .q-word { font-size: 54px; font-weight: 800; letter-spacing: -2px; background: linear-gradient(135deg, #fff 20%, var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 6px; line-height: 1; }
+  .q-label { font-size: 13px; color: var(--muted); }
+
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .choice-btn { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 16px 18px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text); text-align: left; line-height: 1.5; transition: all 0.15s; display: flex; align-items: flex-start; gap: 10px; min-height: 68px; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--surface2); transform: translateY(-1px); }
+  .choice-label { font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--muted); background: var(--surface2); padding: 2px 7px; border-radius: 5px; flex-shrink: 0; margin-top: 1px; }
+  .choice-btn.correct { border-color: var(--green); background: var(--green-bg); animation: pulse-g 0.3s ease; }
+  .choice-btn.correct .choice-label { background: var(--green); color: #000; }
+  .choice-btn.wrong { border-color: var(--red); background: var(--red-bg); animation: shake 0.3s ease; }
+  .choice-btn.wrong .choice-label { background: var(--red); color: #fff; }
+  .choice-btn:disabled { cursor: default; }
+
+  @keyframes pulse-g { 0%{transform:scale(1)} 50%{transform:scale(1.015)} 100%{transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+  .feedback { min-height: 40px; text-align: center; font-size: 14px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+  .feedback.show { opacity: 1; }
+  .feedback.fb-o { color: var(--green); }
+  .feedback.fb-x { color: var(--red); }
+
+  .next-btn { width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none; border-radius: var(--radius); padding: 15px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: none; }
+  .next-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .next-btn.visible { display: block; animation: fadeUp 0.2s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  .kbd-hint { text-align: center; font-size: 11px; color: var(--border); margin-top: 10px; font-family: 'JetBrains Mono', monospace; }
+
+  .complete-page { display: none; width: 100%; max-width: 600px; padding: 48px 24px; text-align: center; }
+  .big-pct { font-size: 88px; font-weight: 800; font-family: 'JetBrains Mono', monospace; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 10px; }
+  .complete-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+  .complete-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+  .complete-stats { display: flex; gap: 12px; justify-content: center; margin-bottom: 28px; }
+  .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 28px; flex: 1; max-width: 140px; }
+  .stat-val { font-size: 32px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+  .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .s-o .stat-val { color: var(--green); }
+  .s-x .stat-val { color: var(--red); }
+  .action-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 28px; }
+  .btn-act { border: none; border-radius: var(--radius); padding: 13px 28px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .btn-retry { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+  .btn-retry:hover { filter: brightness(1.1); }
+  .btn-home-act { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-home-act:hover { border-color: var(--muted); }
+  .wrong-section { text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .wrong-section h3 { font-size: 13px; color: var(--red); font-weight: 700; margin-bottom: 14px; }
+  .wrong-row { display: flex; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; align-items: flex-start; }
+  .wrong-row:last-child { border-bottom: none; }
+  .wr-word { font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text); min-width: 140px; }
+  .wr-meaning { color: var(--muted); line-height: 1.55; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">MVP <span>Vol.2</span> 단어 퀴즈</div>
+  <div class="header-sub">4지선다 · 300 words · 6세트 · #1001~1300</div>
+</div>
+
+<div class="page" id="pageHome">
+  <div class="page-title">세트 선택</div>
+  <div class="page-sub">각 세트 50개 · 총 6세트 (1001~1300번)</div>
+  <div class="set-grid" id="setGrid"></div>
+</div>
+
+<div class="quiz-page" id="pageQuiz">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goHome()">← 목록</button>
+    <div class="prog-wrap">
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <div class="prog-text" id="progText">0 / 50</div>
+    </div>
+  </div>
+  <div class="chips">
+    <div class="chip chip-o" id="cO">O 0</div>
+    <div class="chip chip-x" id="cX">X 0</div>
+    <div class="chip chip-n" id="cN">남은 50</div>
+  </div>
+  <div class="q-card">
+    <div class="q-badge" id="qBadge">Set 1 · 1/50</div>
+    <div class="q-num" id="qNum">#1001</div>
+    <div class="q-word" id="qWord">word</div>
+    <div class="q-label">이 단어의 뜻은?</div>
+  </div>
+  <div class="choices" id="choices"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">다음 문제 →</button>
+  <div class="kbd-hint">키보드: 1 2 3 4 선택 · Enter 다음</div>
+</div>
+
+<div class="complete-page" id="pageComplete">
+  <div class="big-pct" id="bigPct">0%</div>
+  <div class="complete-title" id="completeTitle">완료!</div>
+  <div class="complete-sub" id="completeSub"></div>
+  <div class="complete-stats">
+    <div class="stat-box s-o"><div class="stat-val" id="statO">0</div><div class="stat-lbl">정답</div></div>
+    <div class="stat-box s-x"><div class="stat-val" id="statX">0</div><div class="stat-lbl">오답</div></div>
+  </div>
+  <div class="action-row">
+    <button class="btn-act btn-retry" onclick="retrySet()">다시 풀기</button>
+    <button class="btn-act btn-home-act" onclick="goHome()">목록으로</button>
+  </div>
+  <div class="wrong-section" id="wrongSection" style="display:none">
+    <h3>✗ 틀린 단어</h3>
+    <div id="wrongItems"></div>
+  </div>
+</div>
+
+<script>
+const WORDS = [{"num": 1001, "word": "robust", "meaning": "a. 튼튼한, 원기 왕성한, 팔팔한", "short": "튼튼한, 원기 왕성한, 팔팔한"}, {"num": 1002, "word": "paralysis", "meaning": "n. 마비, 불수(不隨); 중풍; (교통·거래 등의) 마비 상태, 정체", "short": "마비, 불수(不隨)"}, {"num": 1003, "word": "stately", "meaning": "a. 당당한, 위엄 있는, 장중한", "short": "당당한, 위엄 있는, 장중한"}, {"num": 1004, "word": "confiscate", "meaning": "vt. 몰수[압수]하다, 징발하다", "short": "몰수[압수]하다, 징발하다"}, {"num": 1005, "word": "duress", "meaning": "n. 구속, 속박, 감금; 협박", "short": "구속, 속박, 감금"}, {"num": 1006, "word": "intimidate", "meaning": "vt. 위협하다, 협박하다", "short": "위협하다, 협박하다"}, {"num": 1007, "word": "stratum", "meaning": "n. (암석 등의) 층, 지층, 단층; (사회) 계층", "short": "(암석 등의) 층, 지층, 단층"}, {"num": 1008, "word": "arduous", "meaning": "a. 몹시 힘든, 고된", "short": "몹시 힘든, 고된"}, {"num": 1009, "word": "exhort", "meaning": "v. 열심히 권하다, 훈계하다", "short": "열심히 권하다, 훈계하다"}, {"num": 1010, "word": "practically", "meaning": "ad. 실제적으로, 실용적으로, 실제로; 사실상, 거의 ~나 다름없이", "short": "실제적으로, 실용적으로, 실제로"}, {"num": 1011, "word": "submerge", "meaning": "v. 물속에 가라앉히다[잠그다]; 물속에 잠기다", "short": "물속에 가라앉히다[잠그다]"}, {"num": 1012, "word": "cortege", "meaning": "n. (집합적) 시종들, 수행원들; 행렬; (특히) 장례 행렬", "short": "(집합적) 시종들, 수행원들"}, {"num": 1013, "word": "synonym", "meaning": "n. 동의어, 유의어", "short": "동의어, 유의어"}, {"num": 1014, "word": "prune", "meaning": "v. (가지·뿌리 등을) 잘라내다, 쳐내다; (불필요한 부분을) 제거하다 / n. 말린 자두", "short": "(가지·뿌리 등을) 잘라내다, 쳐내다"}, {"num": 1015, "word": "luxurious", "meaning": "a. 사치스러운, 호사스러운; 사치에 빠진; 쾌락을 즐기는", "short": "사치스러운, 호사스러운"}, {"num": 1016, "word": "traverse", "meaning": "v. 가로지르다, 횡단하다", "short": "가로지르다, 횡단하다"}, {"num": 1017, "word": "imply", "meaning": "vt. 뜻하다, 의미하다; 암시하다, 넌지시 비치다", "short": "뜻하다, 의미하다"}, {"num": 1018, "word": "wordplay", "meaning": "n. 재담, 재치 있는 말장난", "short": "재담, 재치 있는 말장난"}, {"num": 1019, "word": "cutting-edge", "meaning": "a. 최첨단의", "short": "최첨단의"}, {"num": 1020, "word": "brace", "meaning": "v. 떠받치다, 강화하다; 대비하다, 마음의 준비를 하게 하다 / n. 버팀대, 지주(支柱)", "short": "떠받치다, 강화하다"}, {"num": 1021, "word": "finite", "meaning": "a. 한정[제한]되어 있는, 유한한", "short": "한정[제한]되어 있는, 유한한"}, {"num": 1022, "word": "carriage", "meaning": "n. (기차의) 객차; 마차; 탈것, 차; 유모차; 운반[수송]; 운반비[수송비]; 몸가짐, 자세", "short": "(기차의) 객차"}, {"num": 1023, "word": "itinerant", "meaning": "a. 순회하는, 떠돌이다니는", "short": "순회하는, 떠돌이다니는"}, {"num": 1024, "word": "delve", "meaning": "v. 탐구하다, 철저히 조사하다; (정보를 찾으려고) 철저히 뒤지다", "short": "탐구하다, 철저히 조사하다"}, {"num": 1025, "word": "chemistry", "meaning": "n. 화학; 화학적 성질, 화학 반응[작용]; (남과의) 공감대, 마음이 통함, 공합이 잘 맞음", "short": "화학"}, {"num": 1026, "word": "vandalize", "meaning": "vt. (예술·문화·공공기물을) 파괴하다, 파손하다", "short": "(예술·문화·공공기물을) 파괴하다, 파손하다"}, {"num": 1027, "word": "prolific", "meaning": "a. (사람·동물이) 다산(多産)의; (식물이) 열매를 많이 맺는; (작가 따위가) 다작(多作)의; (상상력이) 풍부한; (땅이) 비옥한", "short": "(사람·동물이) 다산(多産)의"}, {"num": 1028, "word": "crouch", "meaning": "v. 쭈그리고 앉다, 웅크리다; (비굴하게) 허리를 낮추다, 굽실거리다 / n. 웅크리기, 웅크린 자세", "short": "쭈그리고 앉다, 웅크리다"}, {"num": 1029, "word": "gifted", "meaning": "a. 타고난[천부의] 재능이 있는; 유능한; 머리가 매우 좋은", "short": "타고난[천부의] 재능이 있는"}, {"num": 1030, "word": "bystander", "meaning": "n. 방관자, 구경꾼", "short": "방관자, 구경꾼"}, {"num": 1031, "word": "rescue", "meaning": "vt. 구하다, 구조하다, 구출하다 / n. 구조, 구출, 구제", "short": "구하다, 구조하다, 구출하다"}, {"num": 1032, "word": "mendicant", "meaning": "n. 거지, 동냥아치 / a. (수도사 등이) 구걸하는, 빌어먹는, 탁발하는", "short": "거지, 동냥아치"}, {"num": 1033, "word": "domain", "meaning": "n. 영토, 영지; 판도; (개인의) 소유지; (지식·활동의) 영역, 분야, 범위", "short": "영토, 영지"}, {"num": 1034, "word": "formulate", "meaning": "vt. 명확히[체계적으로] 나타내다[말하다]; 공식화[정식화]하다, 공식으로 나타내다", "short": "명확히[체계적으로] 나타내다[말하다]"}, {"num": 1035, "word": "awe", "meaning": "n. 경외(敬畏), 두려움 / vt. 두려움[경외하는 마음]을 느끼게 하다", "short": "경외(敬畏), 두려움"}, {"num": 1036, "word": "trunk", "meaning": "n. (나무의) 줄기; (사람·동물의) 몸통, 동체; (곤충의) 가슴부", "short": "(나무의) 줄기"}, {"num": 1037, "word": "sluggard", "meaning": "n. 게으름뱅이, 나태한 사람 / a. 게으른, 나태한, 귀찮아하는", "short": "게으름뱅이, 나태한 사람"}, {"num": 1038, "word": "orient", "meaning": "v. 방위를 바르게 맞추다, 바른 방향[위치]에 놓다; (새로운 환경 등에) 적응시키다; (신입생 등에) 지도·강습을 하다 / n. 동양", "short": "방위를 바르게 맞추다, 바른 방향[위치]에 놓다"}, {"num": 1039, "word": "backlash", "meaning": "n. 반발, 반동", "short": "반발, 반동"}, {"num": 1040, "word": "attend", "meaning": "v. 출석하다, 참석하다; 시중들다, 간호하다; 주의하다, 경청하다", "short": "출석하다, 참석하다"}, {"num": 1041, "word": "oral", "meaning": "a. 구두(口頭)의, 구전(口傳)의, 구술의; 입의; (약 등이) 경구용의", "short": "구두(口頭)의, 구전(口傳)의, 구술의"}, {"num": 1042, "word": "monarch", "meaning": "n. 군주, 제왕", "short": "군주, 제왕"}, {"num": 1043, "word": "homing", "meaning": "a. 집으로 돌아오는; 귀소성(歸巢性)이 있는; (자동) 유도[추적]의", "short": "집으로 돌아오는"}, {"num": 1044, "word": "jury", "meaning": "n. 배심, 배심원단; (콘테스트 등의) 심사위원", "short": "배심, 배심원단"}, {"num": 1045, "word": "voracious", "meaning": "a. (음식에 대해) 식욕이 왕성한, 대식하는, 게걸스러운; (새로운 정보 지식을) 열렬히 탐하는", "short": "(음식에 대해) 식욕이 왕성한, 대식하는, 게걸스러운"}, {"num": 1046, "word": "spike", "meaning": "v. 못을 박다; (뾰족한 것으로) 찌르다; (가치가) 급등하다; (음료에) 알코올[마약]을 넣다 / n. 못, (못같이) 뾰족한 것; 급등, 급증", "short": "못을 박다"}, {"num": 1047, "word": "intransigent", "meaning": "a. 타협[양보] 하지 않는; 완고한", "short": "타협[양보] 하지 않는"}, {"num": 1048, "word": "epigraph", "meaning": "n. (묘비·동상 등의) 비문(碑文), 비명(碑銘)", "short": "(묘비·동상 등의) 비문(碑文), 비명(碑銘)"}, {"num": 1049, "word": "dissuade", "meaning": "vt. (설득하여) 단념시키다", "short": "(설득하여) 단념시키다"}, {"num": 1050, "word": "gusto", "meaning": "n. (음식의) 맛; 마음속에서 우러나오는 즐거움[기쁨]; 열정; (개인의) 즐아하는 것, 기호(嗜好), 취미", "short": "(음식의) 맛"}, {"num": 1051, "word": "abdicate", "meaning": "v. (왕위·권리 등을) 버리다, 포기하다; 퇴위하다", "short": "(왕위·권리 등을) 버리다, 포기하다"}, {"num": 1052, "word": "volatile", "meaning": "a. 휘발성의, 증발하기 쉬운; 변덕스러운; (정세·상황 따위가) 불안정한, 일촉즉발의", "short": "휘발성의, 증발하기 쉬운"}, {"num": 1053, "word": "diagram", "meaning": "n. 도형, 도표, 도식", "short": "도형, 도표, 도식"}, {"num": 1054, "word": "beget", "meaning": "vt. (아버지가) (자식을) 보다, 낳다, 얻다; 생기게 하다, 초래하다", "short": "(아버지가) (자식을) 보다, 낳다, 얻다"}, {"num": 1055, "word": "integrate", "meaning": "v. (부분·요소를) 통합하다; 완전하게 하다; (학교·공공시설 등에서의) 인종[종교적] 차별을 폐지하다", "short": "(부분·요소를) 통합하다"}, {"num": 1056, "word": "shrub", "meaning": "n. 키 작은 나무, 관목(灌木)", "short": "키 작은 나무, 관목(灌木)"}, {"num": 1057, "word": "down-to-earth", "meaning": "a. 현실적인, 실제적인; 세상 물정에 밝은", "short": "현실적인, 실제적인"}, {"num": 1058, "word": "promulgate", "meaning": "vt. (법률 등을) 공포하다, 선포하다; (교리·주의 등을) 선전하다, 널리 알리다", "short": "(법률 등을) 공포하다, 선포하다"}, {"num": 1059, "word": "mortgage", "meaning": "n. (법률) 저당, 저당 잡힘; 담보; 담보 대출금, (저당) 융자금", "short": "(법률) 저당, 저당 잡힘"}, {"num": 1060, "word": "auspicious", "meaning": "a. 길조의, 상서로운, 행운의", "short": "길조의, 상서로운, 행운의"}, {"num": 1061, "word": "demagogue", "meaning": "n. 선동 정치가, (민중) 선동가", "short": "선동 정치가, (민중) 선동가"}, {"num": 1062, "word": "flummox", "meaning": "vt. 어쩔 줄 모르게 하다, 당황시키다, 쩔쩔매게 하다", "short": "어쩔 줄 모르게 하다, 당황시키다, 쩔쩔매게 하다"}, {"num": 1063, "word": "ally", "meaning": "v. 동맹[결연, 연합, 제휴]시키다[하다] / n. 동맹국, 연합국; 협력자", "short": "동맹[결연, 연합, 제휴]시키다[하다]"}, {"num": 1064, "word": "insidious", "meaning": "a. 교활한, 음흉한; 방심할 수 없는 남을 함정에 빠뜨리려는, 남을 속이는; (병 등이) 모르는 사이에 진행하는, 잠행성의", "short": "교활한, 음흉한"}, {"num": 1065, "word": "treaty", "meaning": "n. (국가 간의) 조약, 협정", "short": "(국가 간의) 조약, 협정"}, {"num": 1066, "word": "stipulate", "meaning": "v. (조항 등이) ~을 규정하다, 명기[명문화]하다", "short": "(조항 등이) ~을 규정하다, 명기[명문화]하다"}, {"num": 1067, "word": "pendent", "meaning": "a. 매달린, 늘어진; 미결의, 미정의, 현안의", "short": "매달린, 늘어진"}, {"num": 1068, "word": "limp", "meaning": "vi. (다리를) 절다, 절뚝거리다; (작업·기동력 등이) 지지부진하다 / a. (몸이) 축 늘어진, 흐느적거리는; 기염(활력)이 없는, 지친", "short": "(다리를) 절다, 절뚝거리다"}, {"num": 1069, "word": "extreme", "meaning": "a. 극도의, 극심한; 극단적인, 과격한; (중심에서) 가장 먼, 맨 끝의; 최종의, 최후의", "short": "극도의, 극심한"}, {"num": 1070, "word": "holocaust", "meaning": "n. (특히 전쟁·화재로 인한) 대참사, 대파괴, 대학살; (the H~) (나치에 의한) 유대인 대학살", "short": "(특히 전쟁·화재로 인한) 대참사, 대파괴, 대학살"}, {"num": 1071, "word": "monumental", "meaning": "a. 기념비적인, 역사적 의미가 있는; 엄청난, 대단한", "short": "기념비적인, 역사적 의미가 있는"}, {"num": 1072, "word": "escapade", "meaning": "n. 엉뚱한 짓, 장난; 탈선행위", "short": "엉뚱한 짓, 장난"}, {"num": 1073, "word": "compact", "meaning": "a. 꽉 찬, 빽빽한; 조밀한, 촘촘한, 밀집한; (동 등이) 소형인, 작고 경제적인; (문장이) 간결한", "short": "꽉 찬, 빽빽한"}, {"num": 1074, "word": "groan", "meaning": "v. 신음하다, 신음소리를 내다; 신음하며[몹시] 괴로워하다; 변만하다", "short": "신음하다, 신음소리를 내다"}, {"num": 1075, "word": "irrespective", "meaning": "a. 관계없는, 상관[고려]하지 않는", "short": "관계없는, 상관[고려]하지 않는"}, {"num": 1076, "word": "anthropology", "meaning": "n. 인류학", "short": "인류학"}, {"num": 1077, "word": "substantial", "meaning": "a. (양·크기·중요성이) 상당한, 충분한; 실질적인, 본질적인; 견고한, 튼튼한; 진실한", "short": "(양·크기·중요성이) 상당한, 충분한"}, {"num": 1078, "word": "convene", "meaning": "v. (모임·회의를) 소집하다; 모이다, 회합하다", "short": "(모임·회의를) 소집하다"}, {"num": 1079, "word": "basement", "meaning": "n. (건물의) 지하층, 지하실; (구조물의) 최하부", "short": "(건물의) 지하층, 지하실"}, {"num": 1080, "word": "turbid", "meaning": "a. 흐린, 탁한; 갈팡질팡하는, 혼란스러운", "short": "흐린, 탁한"}, {"num": 1081, "word": "decelerate", "meaning": "v. 속력을 늦추다[줄이다], 감속하다", "short": "속력을 늦추다[줄이다], 감속하다"}, {"num": 1082, "word": "prohibitive", "meaning": "a. 금지의; 엄청나게 비싼", "short": "금지의"}, {"num": 1083, "word": "caucus", "meaning": "n. (정당의) 간부회의, 전당대회", "short": "(정당의) 간부회의, 전당대회"}, {"num": 1084, "word": "surmount", "meaning": "vt. (곤란 등을) 이겨내다, 극복하다; (산에) 오르다; 완전히 오르다, 타고 넘다", "short": "(곤란 등을) 이겨내다, 극복하다"}, {"num": 1085, "word": "utopian", "meaning": "a. 유토피아의, 이상향의, 공상적인", "short": "유토피아의, 이상향의, 공상적인"}, {"num": 1086, "word": "opprobrium", "meaning": "n. 불명예, 오명, 치욕; 악담, 욕지거리, 비난", "short": "불명예, 오명, 치욕"}, {"num": 1087, "word": "resort", "meaning": "vi. 의지하다, 호소하다; 자주 드나들다 / n. 유흥지, 별장가; 의지, 의뢰; (특정 상황에서의) 제일[마지막, 최후의] 수단", "short": "의지하다, 호소하다"}, {"num": 1088, "word": "convex", "meaning": "a. 볼록면의, 볼록한", "short": "볼록면의, 볼록한"}, {"num": 1089, "word": "emphasis", "meaning": "n. 강조, 역설, 중요시", "short": "강조, 역설, 중요시"}, {"num": 1090, "word": "forthcoming", "meaning": "a. 곧 나타나려고 하는, 다가오는, 이번의; (현재나) 준비되어 있는, 이용할 수 있는", "short": "곧 나타나려고 하는, 다가오는, 이번의"}, {"num": 1091, "word": "nurture", "meaning": "n. 양육, 양성, 사육; 교육, 지도 / vt. 키우다, 양육하다; 육성하다", "short": "양육, 양성, 사육"}, {"num": 1092, "word": "convoy", "meaning": "n. 호송, 호위; 호위대 / vt. 호위[경호, 호송]하다", "short": "호송, 호위"}, {"num": 1093, "word": "weigh", "meaning": "v. 무게[체중]를 달다; 무게가 ~이다; 숙고하다, 고찰하다; 평가하다; 비교 검토하다", "short": "무게[체중]를 달다"}, {"num": 1094, "word": "excerpt", "meaning": "n. 발췌, 인용(구) / v. 발췌하다, 인용하다", "short": "발췌, 인용(구)"}, {"num": 1095, "word": "gibberish", "meaning": "n. 횡설수설, 뭔가 뭔지 알 수 없는 말", "short": "횡설수설, 뭔가 뭔지 알 수 없는 말"}, {"num": 1096, "word": "chastise", "meaning": "vt. 심하게 꾸짖다[비난하다], 질책하다; (매질 등으로) 벌하다, 징계하다", "short": "심하게 꾸짖다[비난하다], 질책하다"}, {"num": 1097, "word": "radiant", "meaning": "a. 빛나는, 밝은; (행복·희망 등으로) 빛나는, 환한; 복사(輻射)의, 복사에 의한, 방사의", "short": "빛나는, 밝은"}, {"num": 1098, "word": "predilection", "meaning": "n. 편애, 매우 좋아함", "short": "편애, 매우 좋아함"}, {"num": 1099, "word": "mire", "meaning": "v. 진창에 빠지게 하다[빠지다]; (곤경·공지에) 빠뜨리다 / n. 진창, 수렁; 공지, 곤경", "short": "진창에 빠지게 하다[빠지다]"}, {"num": 1100, "word": "amulet", "meaning": "n. 부적", "short": "부적"}, {"num": 1101, "word": "notorious", "meaning": "a. 악명 높은", "short": "악명 높은"}, {"num": 1102, "word": "adulate", "meaning": "v. 아첨하다, 비위 맞추다, 무턱대고 칭찬하다", "short": "아첨하다, 비위 맞추다, 무턱대고 칭찬하다"}, {"num": 1103, "word": "parvenu", "meaning": "n. 벼락부자, 벼락 출세자", "short": "벼락부자, 벼락 출세자"}, {"num": 1104, "word": "convey", "meaning": "vt. 나르다, 운반[운송]하다; (지식 등을) 전달하다; (소리 등을) 전하다; (병을) 옮기다", "short": "나르다, 운반[운송]하다"}, {"num": 1105, "word": "penitence", "meaning": "n. 후회, 뉘우침, 참회, 회개", "short": "후회, 뉘우침, 참회, 회개"}, {"num": 1106, "word": "instigate", "meaning": "vt. 부추기다, 선동하다", "short": "부추기다, 선동하다"}, {"num": 1107, "word": "reticent", "meaning": "a. 과묵한, 말이 적은, 말을 삼가는", "short": "과묵한, 말이 적은, 말을 삼가는"}, {"num": 1108, "word": "deplete", "meaning": "vt. 격감시키다; (세력·자원 등을) 고갈시키다", "short": "격감시키다"}, {"num": 1109, "word": "heap", "meaning": "n. 쌓아올린 것, 퇴적, 덩어리; 많음, 다수, 다량 / v. 쌓아올리다, 산처럼 쌓다; (돈부 등을) 축적하다", "short": "쌓아올린 것, 퇴적, 덩어리"}, {"num": 1110, "word": "prosaic", "meaning": "a. 단조로운, 지루한; 산문의, 산문체의", "short": "단조로운, 지루한"}, {"num": 1111, "word": "bask", "meaning": "vi. (햇볕·열 등을) 쬐다, 일광욕하다; (행복·은혜·행운 등을) 입다, 누리다", "short": "(햇볕·열 등을) 쬐다, 일광욕하다"}, {"num": 1112, "word": "superficial", "meaning": "a. 외견상의, 표면적인, 피상적인; 깊이가 없는, 경박한, 얄팍한, 천박한", "short": "외견상의, 표면적인, 피상적인"}, {"num": 1113, "word": "turnkey", "meaning": "n. 교도관, 간수 / a. (건설·플랜트 수출 계약 등에서) 완성품 인도[일괄도급] 방식의", "short": "교도관, 간수"}, {"num": 1114, "word": "fragile", "meaning": "a. 깨지기 쉬운, 부서지기 쉬운; 하약한, 연약한", "short": "깨지기 쉬운, 부서지기 쉬운"}, {"num": 1115, "word": "mumble", "meaning": "v. 중얼거리다", "short": "중얼거리다"}, {"num": 1116, "word": "spot", "meaning": "n. (작은) 점, 반점, 얼룩; (특정한) 곳, 장소, 자리 / v. 발견하다, 찾다, 알아채다", "short": "(작은) 점, 반점, 얼룩"}, {"num": 1117, "word": "crutch", "meaning": "n. 목발; (정신적인) 버팀목, 의자(하게 되는 것)", "short": "목발"}, {"num": 1118, "word": "eavesdrop", "meaning": "v. 엿듣다, 도청하다", "short": "엿듣다, 도청하다"}, {"num": 1119, "word": "acquaintance", "meaning": "n. 아는 사람, 지인; 면식, (약간의) 친분; 지식, 앎", "short": "아는 사람, 지인"}, {"num": 1120, "word": "lachrymose", "meaning": "a. 눈물을 잘 흘리는; 눈물을 자아내는, 애절한", "short": "눈물을 잘 흘리는"}, {"num": 1121, "word": "storage", "meaning": "n. 저장, 보관; 창고보관; 저장고, 보관소", "short": "저장, 보관"}, {"num": 1122, "word": "consolidate", "meaning": "v. 굳히다, 강화하다; 공고하게하다; 통합하다[되다], 통합 정리하다, 합병하다", "short": "굳히다, 강화하다"}, {"num": 1123, "word": "manuscript", "meaning": "n. (책·악보 등의) 원고; 사본, 필사본", "short": "(책·악보 등의) 원고"}, {"num": 1124, "word": "glimpse", "meaning": "n. 흘긋 봄, 잠깐 동안 봄, 일견(一見); (무엇을 이해하는 데 도움이 되는) 짧은 경험[접촉] / v. 흘긋[언뜻] 보다", "short": "흘긋 봄, 잠깐 동안 봄, 일견(一見)"}, {"num": 1125, "word": "invective", "meaning": "n. 욕설, 악담, 독설", "short": "욕설, 악담, 독설"}, {"num": 1126, "word": "surmise", "meaning": "v. 추측하다, 추정하다, 짐작하다 / n. 추측, 추정, 짐작", "short": "추측하다, 추정하다, 짐작하다"}, {"num": 1127, "word": "diffident", "meaning": "a. 자신 없는, 수줍어하는, 숫기 없는, 머뭇거리는, 내성적인", "short": "자신 없는, 수줍어하는, 숫기 없는, 머뭇거리는, 내성적인"}, {"num": 1128, "word": "object", "meaning": "v. 반대하다, 이의를 말하다, 항의하다; 불평을 듣다, 반감을 가지다 / n. 물건, 물체, 사물; 목적, 목표; (동작·감정 등의) 대상; (문법) 목적어", "short": "반대하다, 이의를 말하다, 항의하다"}, {"num": 1129, "word": "wizardry", "meaning": "n. 마법, 마술, 묘기; 첨단기술, 첨단제품", "short": "마법, 마술, 묘기"}, {"num": 1130, "word": "artful", "meaning": "a. (사람·언동 등이) 교활한; (표현 동이) 교묘한, 기교[수단] 있는", "short": "(사람·언동 등이) 교활한"}, {"num": 1131, "word": "carcass", "meaning": "n. (짐승의) 시체; (경멸적) 인체; 송장; (건물·배 등의) 뼈대", "short": "(짐승의) 시체"}, {"num": 1132, "word": "kindle", "meaning": "v. ~에 불을 붙이다, 태우다; 불이 붙다, 타오르다; (감정·열정 등을) 타오르게 하다; 자극하다, 부추기다", "short": "~에 불을 붙이다, 태우다"}, {"num": 1133, "word": "visionary", "meaning": "a. 공상적인, 가공의, 비현실적인; 예지력[선견지명]이 있는 / n. 선견지명이 있는 사람, 선지자", "short": "공상적인, 가공의, 비현실적인"}, {"num": 1134, "word": "equilibrium", "meaning": "n. 평형 (상태), 균형; (마음의) 평정", "short": "평형 (상태), 균형"}, {"num": 1135, "word": "irresistible", "meaning": "a. 억누를 수 없는, 저항할 수 없는; 압도적인; (사람이나 물건이) 못 견디게 매혹적인", "short": "억누를 수 없는, 저항할 수 없는"}, {"num": 1136, "word": "sow", "meaning": "v. (씨를) 뿌리다, 심다 / n. (성숙한) 암퇘지", "short": "(씨를) 뿌리다, 심다"}, {"num": 1137, "word": "allegiance", "meaning": "n. (정당·종교·통치자 등에 대한) 충성", "short": "(정당·종교·통치자 등에 대한) 충성"}, {"num": 1138, "word": "regale", "meaning": "v. 환응하다, 융숭하게 대접하다; 즐겁게[기쁘게] 해 주다; (맛있는 것으로) 원기를 회복하다 / n. 성찬, 향응", "short": "환응하다, 융숭하게 대접하다"}, {"num": 1139, "word": "pretext", "meaning": "n. 구실, 평계", "short": "구실, 평계"}, {"num": 1140, "word": "compelling", "meaning": "a. (너무나 흥미로워서) 주목하지 않을 수 없는; 설득력 있는, 강력한", "short": "(너무나 흥미로워서) 주목하지 않을 수 없는"}, {"num": 1141, "word": "beverage", "meaning": "n. (보통 물 이외의) 마실 것, 음료", "short": "(보통 물 이외의) 마실 것, 음료"}, {"num": 1142, "word": "flint", "meaning": "n. 부싯돌; 라이터 돌; 아주 단단한 물건; 냉혹[무정]한 것", "short": "부싯돌"}, {"num": 1143, "word": "exotic", "meaning": "a. 외국산의, 외국중의, 외래의; 이국적인, 이국풍의", "short": "외국산의, 외국중의, 외래의"}, {"num": 1144, "word": "dowager", "meaning": "n. 귀족 미망인; 부와 기품을 겸비한 여성", "short": "귀족 미망인"}, {"num": 1145, "word": "guarantee", "meaning": "n. 보증; 담보, 담보물; 보증서; 개런티 / vt. 보증하다; ~을 확실히 하다, 보장하다", "short": "보증"}, {"num": 1146, "word": "sturdy", "meaning": "a. (사람·동물이) 강건한, 억센, 건장한; (물건이) 튼튼한, 견고한; 확고한, 단호한", "short": "(사람·동물이) 강건한, 억센, 건장한"}, {"num": 1147, "word": "reward", "meaning": "n. 보수, 보상; 현상금, 보상금, 사례금 / vt. 보수를 주다, 상을 주다; 보답하다; 보복하다, 발하다", "short": "보수, 보상"}, {"num": 1148, "word": "mollycoddle", "meaning": "vt. 지나치게 떠받들다, 응석을 받아주다, 과잉보호하다 / n. 응석받이, 응석받이로 자란 사람", "short": "지나치게 떠받들다, 응석을 받아주다, 과잉보호하다"}, {"num": 1149, "word": "trajectory", "meaning": "n. 탄도, 궤도, 궤적", "short": "탄도, 궤도, 궤적"}, {"num": 1150, "word": "portion", "meaning": "n. 한 조각, 일부, 부분; 몫; (음식의) 1인분 / vt. 나누다, 분할하다, 분배하다", "short": "한 조각, 일부, 부분"}, {"num": 1151, "word": "titular", "meaning": "a. 이름뿐인, 유명무실한; 명의[명목]상의; 표제의, 제목의", "short": "이름뿐인, 유명무실한"}, {"num": 1152, "word": "discretion", "meaning": "n. 신중, 분별; 판단[선택, 행동]의 자유, 자유재량(권)", "short": "신중, 분별"}, {"num": 1153, "word": "pretentious", "meaning": "a. 허세 부리는, 자만하는, 잘난 체하는", "short": "허세 부리는, 자만하는, 잘난 체하는"}, {"num": 1154, "word": "assort", "meaning": "v. 분류하다, 구분하다; (각종 물품을) 고루 갖추다, 구색을 갖추다", "short": "분류하다, 구분하다"}, {"num": 1155, "word": "epiphany", "meaning": "n. (the E~) 예수의 공현(公顯); (e~) (신의) 출현; (어떤 사물이나 본질에 대한) 직관, 통찰", "short": "(the E~) 예수의 공현(公顯)"}, {"num": 1156, "word": "suppress", "meaning": "v. (반란·폭동 등을) 진압하다; (감정 등을) 억누르다, 참다; (인쇄·발표 등을) 금하다", "short": "(반란·폭동 등을) 진압하다"}, {"num": 1157, "word": "indiscriminate", "meaning": "a. 무차별의, 무분별한", "short": "무차별의, 무분별한"}, {"num": 1158, "word": "recruit", "meaning": "v. (신병이나 신입사원 등을) 모집하다[뽑다] / n. 신병; 신입생; 신참자; 초심자, 초보자", "short": "(신병이나 신입사원 등을) 모집하다[뽑다]"}, {"num": 1159, "word": "sham", "meaning": "n. 가짜, 속임, 협잡(協雜), 위선; 속이는 사람; 사기꾼; 야바위꾼; 꾀병 부리는 사람 / a. 모조의, 가짜의, 허위의", "short": "가짜, 속임, 협잡(協雜), 위선"}, {"num": 1160, "word": "corporeal", "meaning": "a. 신체[육체]상의; 유질적인, 물질적인", "short": "신체[육체]상의"}, {"num": 1161, "word": "fray", "meaning": "n. 싸움, 말다툼 / v. (천이) 닳다, (천을) 닳게 하다, 해어지게 하다; (신경을) 날카로워지다, (신경을) 날카로워지게 만들다", "short": "싸움, 말다툼"}, {"num": 1162, "word": "disproportionate", "meaning": "a. 불균형의, 어울리지 않는", "short": "불균형의, 어울리지 않는"}, {"num": 1163, "word": "pare", "meaning": "vt. (과일 등의) 껍질을 벗기다; (비용 등을) 절감하다, 조금씩 줄이다", "short": "(과일 등의) 껍질을 벗기다"}, {"num": 1164, "word": "amphibian", "meaning": "n. 양서류, 양서 동물[식물] / a. 양서류의; 수륙양용의", "short": "양서류, 양서 동물[식물]"}, {"num": 1165, "word": "speculate", "meaning": "v. 사색하다, 깊이 생각하다; 추측[짐작]하다, 억측하다; 투기하다", "short": "사색하다, 깊이 생각하다"}, {"num": 1166, "word": "mogul", "meaning": "n. 중요인물, 거물, 실력자", "short": "중요인물, 거물, 실력자"}, {"num": 1167, "word": "browse", "meaning": "v. (책·신문 등을) 대강 읽다[훑어보다]; (가게 안의 상품을) 이것저것 둘러보다[구경하다]; (정보를 찾아) 인터넷을 돌아다니다; (소·사슴 등이) 풀싹을 먹다", "short": "(책·신문 등을) 대강 읽다[훑어보다]"}, {"num": 1168, "word": "venture", "meaning": "n. 벤처 (사업), 모험, 모험적 사업 / v. 위험을 무릅쓰고 ~하다, 과감히 ~해보다", "short": "벤처 (사업), 모험, 모험적 사업"}, {"num": 1169, "word": "affordable", "meaning": "a. 입수 가능한, (가격이) 알맞은", "short": "입수 가능한, (가격이) 알맞은"}, {"num": 1170, "word": "repast", "meaning": "n. 식사; (한번의) 식사량", "short": "식사"}, {"num": 1171, "word": "conjugal", "meaning": "a. 부부의, 부부간의, 혼인의", "short": "부부의, 부부간의, 혼인의"}, {"num": 1172, "word": "extract", "meaning": "vt. 뽑아내다, 빼내다, 꺼내다; (증류·광물 등을) 추출하다, 채취하다; 발췌하다, 인용하다 / n. 추출물, (정분을 내어 농축한) 진액; 초록(抄錄), 인용(구), 발췌", "short": "뽑아내다, 빼내다, 꺼내다"}, {"num": 1173, "word": "hollow", "meaning": "a. 속이 빈, 텅 빈; 헛된, 무의미한; 공허한", "short": "속이 빈, 텅 빈"}, {"num": 1174, "word": "guru", "meaning": "n. (힌두교의) 도사(道師), 교사(敎師); (신봉자가 숭배하는) 지도자; (어떤 분야의) 전문가, 권위자, 배테랑", "short": "(힌두교의) 도사(道師), 교사(敎師)"}, {"num": 1175, "word": "run-of-the-mill", "meaning": "a. 흔해 빠진, 평범한, 보통의", "short": "흔해 빠진, 평범한, 보통의"}, {"num": 1176, "word": "index", "meaning": "n. 색인, 찾아보기; 표시하는 것, 표시; 지침, 지표; 지수", "short": "색인, 찾아보기"}, {"num": 1177, "word": "entreat", "meaning": "v. 간청하다, 애원하다, 탄원하다", "short": "간청하다, 애원하다, 탄원하다"}, {"num": 1178, "word": "article", "meaning": "n. (동종의 물품의) 한 품목; 물품, 물건; (신문·잡지의) 기사, 논설; (규칙·계약 등의) 조항, 조목", "short": "(동종의 물품의) 한 품목"}, {"num": 1179, "word": "canvass", "meaning": "v. (여론·의견 등을) 상세히 조사하다, 검토하다; (선거·정당·지지를 위한) 유세를 하다", "short": "(여론·의견 등을) 상세히 조사하다, 검토하다"}, {"num": 1180, "word": "masculine", "meaning": "a. 남자 같은, 사내다운; 남재[남성]의; 힘센, 씩씩한, 용감한", "short": "남자 같은, 사내다운"}, {"num": 1181, "word": "landslide", "meaning": "n. 사태, 산사태; (선거의) 압도적인 득표, 압도적인 승리", "short": "사태, 산사태"}, {"num": 1182, "word": "crack", "meaning": "v. 갈라지다, 금이 가다; 금이 가게 하다; (암호를) 해독하다 / n. 갈라진 금, 균열; 틈; 사소한 결함[결점]", "short": "갈라지다, 금이 가다"}, {"num": 1183, "word": "stalemate", "meaning": "n. 교착상태, 막다름, 곤경", "short": "교착상태, 막다름, 곤경"}, {"num": 1184, "word": "insuperable", "meaning": "a. (곤경·문제 등이) 이겨낼 수 없는, 극복할 수 없는", "short": "(곤경·문제 등이) 이겨낼 수 없는, 극복할 수 없는"}, {"num": 1185, "word": "upset", "meaning": "v. 뒤집다, 전복시키다; (계획 등을) 엉망으로 만들다, 잘못되게 만들다 / a. 뒤집힌, 전복한; 당황한, 혼란한, 엉망진창이 된 / n. 전복, 전도, 뒤집힘", "short": "뒤집다, 전복시키다"}, {"num": 1186, "word": "photogenic", "meaning": "a. (사람이) 사진이 잘 받는; (특히) 영화에 알맞은", "short": "(사람이) 사진이 잘 받는"}, {"num": 1187, "word": "sally", "meaning": "n. (농성 부대의) 출격, 돌격; 외출, 소풍, 여행", "short": "(농성 부대의) 출격, 돌격"}, {"num": 1188, "word": "grotesque", "meaning": "a. 터무니없는, 말도 안 되는; 기괴한, 괴상한, 기이한", "short": "터무니없는, 말도 안 되는"}, {"num": 1189, "word": "chronology", "meaning": "n. 연대순 배열[서술]; 연대기, 연표", "short": "연대순 배열[서술]"}, {"num": 1190, "word": "fauna", "meaning": "n. (일정한 지방 또는 시대의) 동물군", "short": "(일정한 지방 또는 시대의) 동물군"}, {"num": 1191, "word": "watershed", "meaning": "a. 분기점을 이루는, 분수령이 되는 / n. 분수령, 분수계; (국면 따위의) 결정적인 갈림[결분기]", "short": "분기점을 이루는, 분수령이 되는"}, {"num": 1192, "word": "outrageous", "meaning": "a. 난폭한, 포학한; 터무니없는, 지나친", "short": "난폭한, 포학한"}, {"num": 1193, "word": "tutelage", "meaning": "n. 교육, 지도, 훈육; (기관 등의) 보호, 후견, 감독", "short": "교육, 지도, 훈육"}, {"num": 1194, "word": "stentorian", "meaning": "a. 목소리가 우렁찬, 목소리가 매우 큰", "short": "목소리가 우렁찬, 목소리가 매우 큰"}, {"num": 1195, "word": "decode", "meaning": "vt. (암호 등을) 해독[번역]하다", "short": "(암호 등을) 해독[번역]하다"}, {"num": 1196, "word": "precept", "meaning": "n. 교훈, 가르침, 개울; 격언", "short": "교훈, 가르침, 개울"}, {"num": 1197, "word": "numerical", "meaning": "a. 수(數)의, 수적인, 숫자상의, 숫자로 나타낸; 계산능력의, 산수능력의", "short": "수(數)의, 수적인, 숫자상의, 숫자로 나타낸"}, {"num": 1198, "word": "cure-all", "meaning": "n. 만병통치약; 모든 문제를 해결할 수 있는 것", "short": "만병통치약"}, {"num": 1199, "word": "mischief", "meaning": "n. (악의 없는) 나쁜 짓, 장난; (사람·평판에 대한) 해[피해], 악영향", "short": "(악의 없는) 나쁜 짓, 장난"}, {"num": 1200, "word": "binocular", "meaning": "a. 두 눈의, 쌍안용(雙眼用)의 / n. (보통 pl.) 쌍안경; 쌍안 망원경[현미경]", "short": "두 눈의, 쌍안용(雙眼用)의"}, {"num": 1201, "word": "mundane", "meaning": "a. 이승의, 현세의, 세속적인; 평범한, 흔히 있는", "short": "이승의, 현세의, 세속적인"}, {"num": 1202, "word": "exasperate", "meaning": "vt. 분개시키다, 화나게 하다; (병고통·감정 따위를) 악화시키다", "short": "분개시키다, 화나게 하다"}, {"num": 1203, "word": "depot", "meaning": "n. (대규모의) 창고, 저장소; (상업) 상품 유통 거점; (군사) 보급소; 연대 본부; 신병 훈련소, 보충대; (철도) 역; 버스 정류장; (버스 등의) 차고", "short": "(대규모의) 창고, 저장소"}, {"num": 1204, "word": "gaze", "meaning": "vi. (놀라움·흥미를 가지고) 가만히 보다, 응시하다 / n. 응시, 주시, 눈여겨 봄", "short": "(놀라움·흥미를 가지고) 가만히 보다, 응시하다"}, {"num": 1205, "word": "apogee", "meaning": "n. 정점, 절정; (천문) 원지점(달이나 인공위성이 지구로부터 가장 멀리 떨어진 지점)", "short": "정점, 절정"}, {"num": 1206, "word": "resonant", "meaning": "a. (소리·목소리 등이) 울리는, 공명[반향]하는, 낭랑한; 공명[공감]을 불러일으키는", "short": "(소리·목소리 등이) 울리는, 공명[반향]하는, 낭랑한"}, {"num": 1207, "word": "psychology", "meaning": "n. 심리학; 심리 (상태)", "short": "심리학"}, {"num": 1208, "word": "disfigure", "meaning": "vt. ~의 외관을 손상시키다, 볼꼴 사납게 하다", "short": "~의 외관을 손상시키다, 볼꼴 사납게 하다"}, {"num": 1209, "word": "sheen", "meaning": "n. 번쩍임, 광휘, 광채; 광택, 윤", "short": "번쩍임, 광휘, 광채"}, {"num": 1210, "word": "account", "meaning": "n. 계산, 셈; 계산서, 청구서; 기술, 서술; 이유, 근거; 원인, 동기 / v. (이유·원인을) 설명하다; (어떤 부분·비율을) 차지하다", "short": "계산, 셈"}, {"num": 1211, "word": "preposterous", "meaning": "a. 말도 안 되는, 터무니없는, 비상식적인, 불합리한; 파격적인, 엉뚱한; 앞뒤가 뒤바뀐", "short": "말도 안 되는, 터무니없는, 비상식적인, 불합리한"}, {"num": 1212, "word": "stain", "meaning": "v. 얼룩지게 하다, 더럽히다; 얼룩지다, 더러워지다 / n. (지우기 힘든) 얼룩; (평판에 생긴) 오점", "short": "얼룩지게 하다, 더럽히다"}, {"num": 1213, "word": "bulletin", "meaning": "n. (중요한) 고시, 공고, 게시; (라디오·텔레비전의) 속보, 뉴스 속보", "short": "(중요한) 고시, 공고, 게시"}, {"num": 1214, "word": "initiate", "meaning": "vt. 시작하다, 개시하다, 창시하다; 초보[원리]를 가르치다, 전수하다; 가입[입회]시키다", "short": "시작하다, 개시하다, 창시하다"}, {"num": 1215, "word": "heterodox", "meaning": "a. 이교(異敎)의, 이단의, 비정통적인", "short": "이교(異敎)의, 이단의, 비정통적인"}, {"num": 1216, "word": "surveillance", "meaning": "n. 감시, 감독", "short": "감시, 감독"}, {"num": 1217, "word": "wallow", "meaning": "vi. (물·진흙 속에서) 뒹굴다; (사치·쾌락 등에) 빠지다, 탐닉하다", "short": "(물·진흙 속에서) 뒹굴다"}, {"num": 1218, "word": "vassal", "meaning": "n. (봉건 시대의) 봉신, 가신; 종속자, 부하; 노예 / a. 봉신의, 신하의; 예속된, 종속된, 노예 같은", "short": "(봉건 시대의) 봉신, 가신"}, {"num": 1219, "word": "tailor", "meaning": "v. (특정한 목적·사람 등에) 맞추다[조정하다]", "short": "(특정한 목적·사람 등에) 맞추다[조정하다]"}, {"num": 1220, "word": "steadfast", "meaning": "a. 확고부동한, 고정된, (신념 등이) 불변의, 부동의", "short": "확고부동한, 고정된, (신념 등이) 불변의, 부동의"}, {"num": 1221, "word": "chauvinist", "meaning": "n. 맹목적[광신적] 애국주의자; (주의나 성 차별 등의) 극단적 우월주의자", "short": "맹목적[광신적] 애국주의자"}, {"num": 1222, "word": "epidemic", "meaning": "n. 유행병, 전염병 / a. 유행성[전염병]의; 유행하고 있는", "short": "유행병, 전염병"}, {"num": 1223, "word": "cataclysm", "meaning": "n. (사회·정치적인) 격변, 대변동; 대홍수, 범람", "short": "(사회·정치적인) 격변, 대변동"}, {"num": 1224, "word": "ragamuffin", "meaning": "n. 누더기를 걸친 사람[아이]; 부랑아", "short": "누더기를 걸친 사람[아이]"}, {"num": 1225, "word": "propel", "meaning": "vt. 나아가게 하다, 몰고 가다, 추진하다", "short": "나아가게 하다, 몰고 가다, 추진하다"}, {"num": 1226, "word": "impudent", "meaning": "a. 건방진, 무례한, 버릇없는", "short": "건방진, 무례한, 버릇없는"}, {"num": 1227, "word": "coalesce", "meaning": "vi. (더 큰 덩어리로) 합치다, 연합[합동]하다", "short": "(더 큰 덩어리로) 합치다, 연합[합동]하다"}, {"num": 1228, "word": "pugnacious", "meaning": "a. 호전적인, 싸움하기 좋아하는", "short": "호전적인, 싸움하기 좋아하는"}, {"num": 1229, "word": "voyage", "meaning": "n. 여행, 항해(특히 바다·우주로 하는 긴 여행)", "short": "여행, 항해(특히 바다·우주로 하는 긴 여행)"}, {"num": 1230, "word": "zoom", "meaning": "v. (가격·비용 등이) 급등[급증]하다; (인물·장면을) 확대[축소]하다", "short": "(가격·비용 등이) 급등[급증]하다"}, {"num": 1231, "word": "trilogy", "meaning": "n. (연극·소설·영화 등의) 3부작", "short": "(연극·소설·영화 등의) 3부작"}, {"num": 1232, "word": "dutiful", "meaning": "a. 본분을 지키는[다하는], 충실한; 순종하는", "short": "본분을 지키는[다하는], 충실한"}, {"num": 1233, "word": "sleight", "meaning": "n. 능숙한 솜씨; 교활; 속임수", "short": "능숙한 솜씨"}, {"num": 1234, "word": "crawl", "meaning": "v. 네발로 가다, 포복하다; (식물의 덩굴 등이) 기다; 천천히 가다, 서행(徐行)하다; (시간이) 천천히 흐르다; 비굴하게 굴다, 굽실거리다", "short": "네발로 가다, 포복하다"}, {"num": 1235, "word": "malaise", "meaning": "n. (질병의 전구(前驅) 증상으로서) 몸이 불편한 상태, 불쾌, 부조; (도덕적·사회적 퇴락에 대한) 막연한 불안, 초조, 불쾌감", "short": "(질병의 전구(前驅) 증상으로서) 몸이 불편한 상태, 불쾌, 부조"}, {"num": 1236, "word": "nominate", "meaning": "v. (선거·임명의 후보자로서) 지명하다, 임명하다", "short": "(선거·임명의 후보자로서) 지명하다, 임명하다"}, {"num": 1237, "word": "askance", "meaning": "ad. 의심[불신]의 눈으로; 옆으로, 비스듬히, 곁눈으로", "short": "의심[불신]의 눈으로"}, {"num": 1238, "word": "cumulative", "meaning": "a. 점증적인, 누적하는", "short": "점증적인, 누적하는"}, {"num": 1239, "word": "begrudge", "meaning": "vt. 시기하다; 주기를 꺼리다, 못마땅[아까워]하다", "short": "시기하다"}, {"num": 1240, "word": "gnome", "meaning": "n. 격언, 금언; 땅속의 요정, 꼬마 난쟁이; (the ~s) 국제적 금융업자[은행가]", "short": "격언, 금언"}, {"num": 1241, "word": "flip", "meaning": "v. (손가락으로) 튀기다, 헥 던지다 / n. 손가락으로 튀김, 가볍게 치기", "short": "(손가락으로) 튀기다, 헥 던지다"}, {"num": 1242, "word": "pigment", "meaning": "n. 그림물감, 안료(顔料); (생물) 색소 / v. 착색하다; 물들다", "short": "그림물감, 안료(顔料)"}, {"num": 1243, "word": "juggernaut", "meaning": "n. (압도적으로) 강력하고 거대한 것[존재, 조직]; 대형 버스, 대형 트럭", "short": "(압도적으로) 강력하고 거대한 것[존재, 조직]"}, {"num": 1244, "word": "swear", "meaning": "v. 맹세하다, 선서하다; 욕하다, 악담하다", "short": "맹세하다, 선서하다"}, {"num": 1245, "word": "quorum", "meaning": "n. (의결에 필요한) 정족수(定足數)", "short": "(의결에 필요한) 정족수(定足數)"}, {"num": 1246, "word": "evidence", "meaning": "n. 증거; 증언; 형적, 흔적", "short": "증거"}, {"num": 1247, "word": "occult", "meaning": "a. 신비로운, 불가사의의; 마술적인, 초자연적인", "short": "신비로운, 불가사의의"}, {"num": 1248, "word": "peril", "meaning": "n. 위험; 모험", "short": "위험"}, {"num": 1249, "word": "retrieve", "meaning": "v. 되찾다, 회수[회복]하다; 만회하다, 부활[경생]시키다; 벌충하다, (손해를) 바꾸다; 수선하다, 정하다; (컴퓨터) (정보를) 검색하다", "short": "되찾다, 회수[회복]하다"}, {"num": 1250, "word": "level-headed", "meaning": "a. 분별 있는, 상식이 있는, 판단이 공정한", "short": "분별 있는, 상식이 있는, 판단이 공정한"}, {"num": 1251, "word": "voluntary", "meaning": "a. 자발적인, 임의적인, 자진한; 고의의, 계획적인", "short": "자발적인, 임의적인, 자진한"}, {"num": 1252, "word": "enunciate", "meaning": "v. (분명히) 발음하다; (생각을 명확히) 발하다; (이론·제안 등을) 발표[선언]하다", "short": "(분명히) 발음하다"}, {"num": 1253, "word": "simian", "meaning": "a. 원숭이의; 유인원(類人猿)의; 원숭이 같은 / n. 유인원, 원숭이", "short": "원숭이의"}, {"num": 1254, "word": "contempt", "meaning": "n. 경멸, 모욕, 멸시; 경시, 무시; 치욕, 불명예, 체면 손상", "short": "경멸, 모욕, 멸시"}, {"num": 1255, "word": "defraud", "meaning": "v. 속여 빼앗다, 편취하다, 사취하다; 속이다", "short": "속여 빼앗다, 편취하다, 사취하다"}, {"num": 1256, "word": "inordinate", "meaning": "a. 과도한, 지나친; 난폭한; 무절제한; 불규칙한", "short": "과도한, 지나친"}, {"num": 1257, "word": "moniker", "meaning": "n. (사람의) 이름; 별명, 별칭", "short": "(사람의) 이름"}, {"num": 1258, "word": "release", "meaning": "vt. 해방[석방]하다; 면제[해제]하다; 놀아 놓다; (폭탄을) 투하하다; 방출하다; (영화를) 개봉하다; (정보·레코드·신간 등을) 공개[발표, 발매]하다 / n. 해방; 방면, 면제; 발표, 공개, 발매; 개봉 (영화)", "short": "해방[석방]하다"}, {"num": 1259, "word": "denouement", "meaning": "n. (소설·희극의) 대단원; (사건의) 고비; (분쟁 따위의) 해결, 결말", "short": "(소설·희극의) 대단원"}, {"num": 1260, "word": "splenetic", "meaning": "a. 성을 잘 내는, 까다로운, 짜증은; 비장(脾臟)의", "short": "성을 잘 내는, 까다로운, 짜증은"}, {"num": 1261, "word": "adore", "meaning": "vt. 흠모하다; 숭배하다, 존경하다; 아주 좋아하다", "short": "흠모하다"}, {"num": 1262, "word": "sewage", "meaning": "n. 하수, 오물, 오수(汚水)", "short": "하수, 오물, 오수(汚水)"}, {"num": 1263, "word": "blight", "meaning": "n. (식물의) 마름병 / vt. 말라죽게[시들게] 하다; 망치다", "short": "(식물의) 마름병"}, {"num": 1264, "word": "enterprise", "meaning": "n. 기획, 계획; (특히 모험적인) 사업; 기업(체), 회사; 진취적인 정신, 기업심; 모험심", "short": "기획, 계획"}, {"num": 1265, "word": "nosedive", "meaning": "n. (항공기의) 수직 강하; (가격 등의) 폭락, 급락, 급강하 / vi. (항공기 등이) 수직 강하하다; (가격 등이) 폭락하다", "short": "(항공기의) 수직 강하"}, {"num": 1266, "word": "penniless", "meaning": "a. 무일푼의, 몹시 가난한", "short": "무일푼의, 몹시 가난한"}, {"num": 1267, "word": "strand", "meaning": "v. 좌초시키다, 좌초하다, 오도 가도 못하게 하다[되다] / n. (실·전선·머리카락 등의) 가닥[올, 줄]; 물가, 해변", "short": "좌초시키다, 좌초하다, 오도 가도 못하게 하다[되다]"}, {"num": 1268, "word": "confluence", "meaning": "n. (두 강의) 합류 지점; (두 가지 이상 사물의) 합철[융합]", "short": "(두 강의) 합류 지점"}, {"num": 1269, "word": "annual", "meaning": "a. 1년의, 1년에 걸친; 매년의", "short": "1년의, 1년에 걸친"}, {"num": 1270, "word": "inkling", "meaning": "n. 암시; 어렴풋이 눈치 챔[알], 약간의 지식", "short": "암시"}, {"num": 1271, "word": "fugitive", "meaning": "a. 도망친, 달아난; 일시적인, 덧없는 / n. 도망자, 탈주자", "short": "도망친, 달아난"}, {"num": 1272, "word": "touchstone", "meaning": "n. 표준, 기준, 시금석", "short": "표준, 기준, 시금석"}, {"num": 1273, "word": "chubby", "meaning": "a. 통통한, 토실토실 살찐", "short": "통통한, 토실토실 살찐"}, {"num": 1274, "word": "discourage", "meaning": "vt. ~의 용기[희망, 자신]를 잃게 하다, 낙담시키다; (계획·사업 등을) 못하게 말리다, 단념시키다; ~을 방해하다, 방해하다", "short": "~의 용기[희망, 자신]를 잃게 하다, 낙담시키다"}, {"num": 1275, "word": "municipal", "meaning": "a. 지방 자치제의, 시[읍, 군의]의", "short": "지방 자치제의, 시[읍, 군의]의"}, {"num": 1276, "word": "punctuate", "meaning": "v. (문장에) 구두점을 찍다; 강조하다; (말을) 중단시키다, 잠시 그치게 하다", "short": "(문장에) 구두점을 찍다"}, {"num": 1277, "word": "cursory", "meaning": "a. 되는 대로의, 대충 하는, 엉성한", "short": "되는 대로의, 대충 하는, 엉성한"}, {"num": 1278, "word": "agnostic", "meaning": "n. 불가지론자", "short": "불가지론자"}, {"num": 1279, "word": "indoctrinate", "meaning": "vt. (교의·신앙 등을) 주입하다; 세뇌시키다", "short": "(교의·신앙 등을) 주입하다"}, {"num": 1280, "word": "amiss", "meaning": "a. [서술적] 적합하지 않은, 잘못된 / ad. 잘못하여; 부적당하게", "short": "[서술적] 적합하지 않은, 잘못된"}, {"num": 1281, "word": "truce", "meaning": "n. 휴전, 정전; 휴전[정전] 협정; 일시적 휴가(休止), 중지, 중단", "short": "휴전, 정전"}, {"num": 1282, "word": "glitter", "meaning": "vi. 번쩍번쩍하다, 빛나다", "short": "번쩍번쩍하다, 빛나다"}, {"num": 1283, "word": "hubris", "meaning": "n. 지나친 자신, 오만, 자만", "short": "지나친 자신, 오만, 자만"}, {"num": 1284, "word": "rig", "meaning": "v. 의장(艤裝)하다; 장비를 갖추다, 준비하다; (시장·가격을) 부정하게 조작하다, 인위적으로 올리다 / n. 장비, 장치; 용구 한 벌; 기계; (석유 천연가스의) 굴착장치", "short": "의장(艤裝)하다"}, {"num": 1285, "word": "prerogative", "meaning": "n. (관직이나 지위에 따르는) 특권, 특혜", "short": "(관직이나 지위에 따르는) 특권, 특혜"}, {"num": 1286, "word": "exemplify", "meaning": "vt. ~의 전형적인 예가 되다; 예를 들다", "short": "~의 전형적인 예가 되다"}, {"num": 1287, "word": "unkempt", "meaning": "a. 흐트러진, 단정치 못한; (말투가) 세련되지 못한, 거친", "short": "흐트러진, 단정치 못한"}, {"num": 1288, "word": "compile", "meaning": "vt. (문서·발표 자료 등을) 한 권의 책으로 엮다, 편찬[편집]하다; (자료를) 모으다, 수집하다", "short": "(문서·발표 자료 등을) 한 권의 책으로 엮다, 편찬[편집]하다"}, {"num": 1289, "word": "succinct", "meaning": "a. 간결한, 간단명료한", "short": "간결한, 간단명료한"}, {"num": 1290, "word": "feudalism", "meaning": "n. 봉건제도, 봉건주의", "short": "봉건제도, 봉건주의"}, {"num": 1291, "word": "wield", "meaning": "vt. (무기·도구 등을) 휘두르다, 사용하다; (권력·권위 등을) 행사하다", "short": "(무기·도구 등을) 휘두르다, 사용하다"}, {"num": 1292, "word": "leash", "meaning": "n. (개 등을 매는) 가죽 끈, 사슬 / vt. 가죽 끈으로 매다; 속박하다; 억제하다", "short": "(개 등을 매는) 가죽 끈, 사슬"}, {"num": 1293, "word": "pill", "meaning": "n. 환약, 알약; (the ~) 경구(經口) 피임약", "short": "환약, 알약"}, {"num": 1294, "word": "bail", "meaning": "n. 보석(保釋); 보석금 / vt. 보석하다; (경제적 위기에 처한 사람·회사 등을) 구해하다", "short": "보석(保釋)"}, {"num": 1295, "word": "delectable", "meaning": "a. 즐거운, 기쁜, 유쾌한; (음식물·음료수가) 아주 맛있는[맛있어 보이는], 좋은 냄새가 나는", "short": "즐거운, 기쁜, 유쾌한"}, {"num": 1296, "word": "giddy", "meaning": "a. 현기증이 나는, 어지러운; 들뜬", "short": "현기증이 나는, 어지러운"}, {"num": 1297, "word": "overtake", "meaning": "v. 따라잡다[붙들다]; 추월하다, (뒤밖인 일 등을) 만히다", "short": "따라잡다[붙들다]"}, {"num": 1298, "word": "captious", "meaning": "a. 흠잡기 잘하는, 말꼬리를 잡고 늘어지는, (공연히) 헐뜯는", "short": "흠잡기 잘하는, 말꼬리를 잡고 늘어지는, (공연히) 헐뜯는"}, {"num": 1299, "word": "mechanism", "meaning": "n. 기계 장치, 기구; 심리 과정, (심적) 기제; 무의식적 수단", "short": "기계 장치, 기구"}, {"num": 1300, "word": "replete", "meaning": "a. 가득한, 충만한, 충분한", "short": "가득한, 충만한, 충분한"}];
+const SET_SIZE = 50;
+const SETS = [];
+for (let i = 0; i < WORDS.length; i += SET_SIZE) SETS.push(WORDS.slice(i, i + SET_SIZE));
+
+let curSet=0, curIdx=0, cO=0, cX=0, wrongWords=[], answered=false, curChoices=[], curCorrect=0;
+let scores = JSON.parse(localStorage.getItem('mvp_vol2_1001_scores') || '{}');
+
+function shuffle(a) {
+  const b=[...a];
+  for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
+  return b;
+}
+function pickDistractors(correct, n) {
+  const used=new Set([correct.num]), out=[];
+  while(out.length<n){const r=WORDS[Math.floor(Math.random()*WORDS.length)];if(!used.has(r.num)){used.add(r.num);out.push(r);}}
+  return out;
+}
+
+function buildGrid() {
+  const g=document.getElementById('setGrid'); g.innerHTML='';
+  SETS.forEach((set,i)=>{
+    const btn=document.createElement('button');
+    btn.className='set-btn'+(scores[i]!==undefined?' done':'');
+    const s=set[0].num, e=set[set.length-1].num;
+    const sc=scores[i]!==undefined?`<span class="set-score" style="color:${scores[i]>=80?'var(--green)':'var(--yellow)'}">${scores[i]}% 정답</span>`:'';
+    btn.innerHTML=`<span class="set-n">Set ${i+1}</span><span class="set-r">#${s} ~ #${e}</span><span class="set-count">${set.length}개</span>${sc}`;
+    btn.onclick=()=>startSet(i); g.appendChild(btn);
+  });
+}
+
+function startSet(idx) {
+  curSet=idx; curIdx=0; cO=0; cX=0; wrongWords=[]; answered=false;
+  show('pageQuiz'); loadQ();
+}
+
+function loadQ() {
+  answered=false;
+  const set=SETS[curSet], total=set.length, w=set[curIdx];
+  document.getElementById('qBadge').textContent=`Set ${curSet+1}  ·  ${curIdx+1}/${total}`;
+  document.getElementById('qNum').textContent=`#${String(w.num).padStart(4,'0')}`;
+  document.getElementById('qWord').textContent=w.word;
+  document.getElementById('progFill').style.width=(curIdx/total*100)+'%';
+  document.getElementById('progText').textContent=`${curIdx} / ${total}`;
+  document.getElementById('cO').textContent=`O ${cO}`;
+  document.getElementById('cX').textContent=`X ${cX}`;
+  document.getElementById('cN').textContent=`남은 ${total-curIdx}`;
+  const fb=document.getElementById('feedback'); fb.className='feedback'; fb.textContent='';
+  document.getElementById('nextBtn').classList.remove('visible');
+  const choices=shuffle([w,...pickDistractors(w,3)]);
+  curChoices=choices; curCorrect=choices.findIndex(c=>c.num===w.num);
+  const container=document.getElementById('choices'); container.innerHTML='';
+  choices.forEach((c,i)=>{
+    const btn=document.createElement('button'); btn.className='choice-btn';
+    btn.innerHTML=`<span class="choice-label">${i+1}</span><span>${c.short}</span>`;
+    btn.onclick=()=>select(i); container.appendChild(btn);
+  });
+}
+
+function select(idx) {
+  if(answered) return; answered=true;
+  const btns=document.querySelectorAll('.choice-btn');
+  btns.forEach(b=>b.disabled=true);
+  const ok=idx===curCorrect;
+  btns[idx].classList.add(ok?'correct':'wrong');
+  if(!ok) btns[curCorrect].classList.add('correct');
+  const fb=document.getElementById('feedback');
+  if(ok){cO++;fb.textContent='✓ 정답!';fb.className='feedback show fb-o';}
+  else{cX++;wrongWords.push(SETS[curSet][curIdx]);fb.textContent=`✗ 정답: ${curChoices[curCorrect].short}`;fb.className='feedback show fb-x';}
+  document.getElementById('cO').textContent=`O ${cO}`;
+  document.getElementById('cX').textContent=`X ${cX}`;
+  document.getElementById('nextBtn').classList.add('visible');
+}
+
+function nextQ() { curIdx++; if(curIdx>=SETS[curSet].length) showComplete(); else loadQ(); }
+
+function showComplete() {
+  const total=SETS[curSet].length, pct=Math.round(cO/total*100);
+  scores[curSet]=pct; localStorage.setItem('mvp_vol2_1001_scores',JSON.stringify(scores));
+  document.getElementById('bigPct').textContent=pct+'%';
+  document.getElementById('completeTitle').textContent=pct===100?'완벽! 🎉':pct>=80?'잘했어! 👏':'계속 연습하자 💪';
+  document.getElementById('completeSub').textContent=`Set ${curSet+1} 완료 · ${total}문제 중 ${cO}개 정답`;
+  document.getElementById('statO').textContent=cO;
+  document.getElementById('statX').textContent=cX;
+  if(wrongWords.length>0){
+    document.getElementById('wrongSection').style.display='block';
+    document.getElementById('wrongItems').innerHTML=wrongWords.map(w=>
+      `<div class="wrong-row"><span class="wr-word">#${String(w.num).padStart(4,'0')} ${w.word}</span><span class="wr-meaning">${w.short}</span></div>`
+    ).join('');
+  } else { document.getElementById('wrongSection').style.display='none'; }
+  show('pageComplete');
+}
+
+function retrySet(){startSet(curSet);}
+function goHome(){show('pageHome');buildGrid();}
+function show(id){['pageHome','pageQuiz','pageComplete'].forEach(p=>{document.getElementById(p).style.display=p===id?'block':'none';});}
+
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('pageQuiz').style.display!=='block') return;
+  if(['1','2','3','4'].includes(e.key)) select(parseInt(e.key)-1);
+  if(e.key==='Enter'&&answered) nextQ();
+});
+
+buildGrid();
+</script>
+</body>
+</html>
